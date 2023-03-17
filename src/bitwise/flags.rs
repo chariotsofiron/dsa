@@ -1,19 +1,35 @@
-/// Computes carry and overflow flags after an addition.
-const fn flags(a: u8, b: u8) -> (bool, bool) {
-    // compute carry and overflow
+//! Computes carry and overflow flags after an addition.
+
+/// Computes the carry flag after an addition.
+#[must_use]
+pub const fn carry(a: u8, b: u8) -> bool {
+    // compute carry
     let result = a.wrapping_add(b);
-    let carry = result < a;
-    let overflow = (a ^ result) >> 7 != (a ^ b) >> 7;
-    (carry, overflow)
+    result < a
+}
+
+/// Computes the overflow flag after an addition.
+#[must_use]
+pub const fn overflow(a: u8, b: u8) -> bool {
+    let result = a.wrapping_add(b);
+    (a ^ result).wrapping_shr(31) != (a ^ b).wrapping_shr(31)
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_carry() {
+        assert_eq!(carry(255, 255), true);
+        assert_eq!(carry(127, 1), false);
+        assert_eq!(carry(1, 1), false);
+    }
+
     #[test]
     fn test_flags() {
-        assert_eq!(flags(255, 255), (true, false));
-        assert_eq!(flags(127, 1), (false, true));
-        assert_eq!(flags(1, 1), (false, false));
+        assert_eq!(overflow(255, 255), false);
+        assert_eq!(overflow(127, 1), true);
+        assert_eq!(overflow(1, 1), false);
     }
 }

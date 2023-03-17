@@ -1,1 +1,1 @@
-
+//! Graphics algorithms

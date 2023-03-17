@@ -1,1 +1,2 @@
-mod flags;
+//! Bitwise operations
+pub mod flags;

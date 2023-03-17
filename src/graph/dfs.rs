@@ -1,13 +1,15 @@
+//! Depth-first search
 use std::{collections::HashSet, hash::Hash};
 
 use super::Graph;
 
 /// Performs a depth first search
-/// https://en.wikipedia.org/wiki/Depth-first_search
-fn depth_first_search<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
+/// <https://en.wikipedia.org/wiki/Depth-first_search>
+pub fn depth_first_search<'src, T>(graph: &'src Graph<T>, start: &'src T) -> Vec<&'src T>
 where
     T: Eq + Hash,
 {
+    // potentially over-allocates if the graph is disconnected
     let mut path = Vec::with_capacity(graph.len());
     let mut seen = HashSet::<&T>::new();
     let mut queue = vec![start];
@@ -15,7 +17,7 @@ where
         if !seen.contains(node) {
             path.push(node);
             seen.insert(node);
-            if let Some(neighbors) = graph.get(&node) {
+            if let Some(neighbors) = graph.get(node) {
                 for neighbor in neighbors {
                     queue.push(neighbor);
                 }
@@ -27,12 +29,11 @@ where
 
 #[cfg(test)]
 mod tests {
+    use super::depth_first_search;
     use std::collections::HashMap;
 
-    use super::depth_first_search;
-
     #[test]
-    fn test_kahn() {
+    fn test_dfs() {
         let graph = HashMap::from([
             (4, vec![1, 5]),
             (1, vec![5, 2]),
