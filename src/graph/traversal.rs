@@ -7,7 +7,7 @@ use super::Graph;
 /// This is the same as DFS <https://en.wikipedia.org/wiki/Depth-first_search>
 /// Visit current node before children.
 #[must_use]
-pub fn preorder<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
+pub fn pre_order<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
 where
     T: Eq + std::hash::Hash,
 {
@@ -31,7 +31,7 @@ where
 ///
 /// aka breadth first search (BFS) <https://en.wikipedia.org/wiki/Breadth-first_search>
 #[must_use]
-pub fn levelorder<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
+pub fn level_order<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
 where
     T: Eq + std::hash::Hash,
 {
@@ -57,7 +57,7 @@ where
 /// The vertices are listed in the order in which they are last visited
 /// by a DFS traversal.
 #[must_use]
-pub fn postorder<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
+pub fn post_order<'a, T>(graph: &'a Graph<T>, start: &'a T) -> Vec<&'a T>
 where
     T: Eq + std::hash::Hash,
 {
@@ -91,9 +91,9 @@ where
 
 #[cfg(test)]
 mod tests {
-    use crate::graph::traversal::{levelorder, preorder};
+    use crate::graph::traversal::{level_order, pre_order};
 
-    use super::postorder;
+    use super::post_order;
     use std::collections::HashMap;
 
     #[test]
@@ -105,7 +105,7 @@ mod tests {
             (4, vec![2]),
             (5, vec![4, 6]),
         ]);
-        assert_eq!(postorder(&graph, &1), vec![&4, &6, &5, &2, &1]);
+        assert_eq!(post_order(&graph, &1), vec![&4, &6, &5, &2, &1]);
 
         let graph = HashMap::from([
             (1, vec![2]),
@@ -114,7 +114,7 @@ mod tests {
             (5, vec![1]),
             (6, vec![5, 4]),
         ]);
-        assert_eq!(postorder(&graph, &6), vec![&3, &2, &1, &5, &4, &6]);
+        assert_eq!(post_order(&graph, &6), vec![&3, &2, &1, &5, &4, &6]);
 
         /* tree structure
             1
@@ -131,8 +131,8 @@ mod tests {
             (3, vec![5, 6]),
             (5, vec![7, 8]),
         ]);
-        assert_eq!(postorder(&graph, &1), vec![&4, &2, &7, &8, &5, &6, &3, &1]);
-        assert_eq!(preorder(&graph, &1), vec![&1, &2, &4, &3, &5, &7, &8, &6]);
-        assert_eq!(levelorder(&graph, &1), vec![&1, &2, &3, &4, &5, &6, &7, &8]);
+        assert_eq!(post_order(&graph, &1), vec![&4, &2, &7, &8, &5, &6, &3, &1]);
+        assert_eq!(pre_order(&graph, &1), vec![&1, &2, &4, &3, &5, &7, &8, &6]);
+        assert_eq!(level_order(&graph, &1), vec![&1, &2, &3, &4, &5, &6, &7, &8]);
     }
 }
