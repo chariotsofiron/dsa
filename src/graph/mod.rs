@@ -1,8 +1,9 @@
 //! Graph algorithms
 use std::collections::HashMap;
 
-pub mod dfs;
 pub mod topological_sort;
+pub mod traversal;
 
-/// A basic graph data structure.
+/// A simple directed graph data structure.
+/// May be disconnected.
 pub type Graph<T> = HashMap<T, Vec<T>>;

@@ -1,4 +1,5 @@
 //! Topological sort
+//! <https://en.wikipedia.org/wiki/Topological_sorting>
 use std::{collections::HashMap, hash::Hash};
 
 use super::Graph;
