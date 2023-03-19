@@ -1,4 +1,5 @@
 //! Sorting algorithms
+#![allow(clippy::integer_arithmetic, clippy::arithmetic_side_effects)]
 pub mod bubble;
 pub mod insertion;
 
