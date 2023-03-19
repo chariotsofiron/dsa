@@ -22,7 +22,7 @@ pub struct Graph {
 }
 
 impl Graph {
-    /// Initializes a graph with vmax vertices and no edges. To reduce
+    /// Initializes a graph with `vmax` vertices and no edges. To reduce
     /// unnecessary allocations, `emax_hint` should be close to the number of
     /// edges that will be inserted.
     #[must_use]
@@ -66,6 +66,21 @@ impl Graph {
             graph: self,
             next_edge: self.first[node],
         }
+    }
+
+    /// Returns a transposed version of the graph.
+    /// <https://en.wikipedia.org/wiki/Transpose_graph>
+    #[must_use]
+    pub fn transpose(&self) -> Self {
+        let mut graph = Self::new(self.len(), self.edge_count());
+        for &entry in &self.first {
+            if let Some(node) = entry {
+                for (v, _) in self.neighbors(node) {
+                    graph.add_edge(v, node);
+                }
+            }
+        }
+        graph
     }
 }
 
@@ -116,5 +131,13 @@ mod tests {
         assert_eq!(graph.len(), 5);
         assert_eq!(graph.edge_count(), 4);
         assert_eq!(graph.neighbors(2).collect::<Vec<_>>(), [(4, 1), (3, 0)]);
+    }
+
+    #[test]
+    fn test_transpose() {
+        let graph = Graph::from([(2, 3), (2, 4), (1, 3)]);
+        assert_eq!(graph.neighbors(2).collect::<Vec<_>>(), [(4, 1), (3, 0)]);
+        let transpose = graph.transpose();
+        assert_eq!(transpose.neighbors(3).collect::<Vec<_>>(), [(1, 2), (2, 1)]);
     }
 }
