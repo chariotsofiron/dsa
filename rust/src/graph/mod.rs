@@ -3,7 +3,9 @@
 //! # Panics
 //!
 //! All methods will panic if given an out-of-bounds element index.
+pub mod cycle;
 pub mod dijkstra;
+pub mod dominance;
 pub mod topological_sort;
 pub mod traversal;
 
@@ -70,6 +72,7 @@ impl Graph {
 
     /// Returns a transposed version of the graph.
     /// <https://en.wikipedia.org/wiki/Transpose_graph>
+    /// Time complexity: O(|V| + |E|)
     #[must_use]
     pub fn transpose(&self) -> Self {
         let mut graph = Self::new(self.len(), self.edge_count());

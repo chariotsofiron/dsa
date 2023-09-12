@@ -1,11 +1,9 @@
 //! Computes carry and overflow flags after an addition.
 
-/// Computes the carry flag after an addition.
+/// Returns `true` if adding a and b would produce a carry.
 #[must_use]
 pub const fn carry(a: u8, b: u8) -> bool {
-    // compute carry
-    let result = a.wrapping_add(b);
-    result < a
+    a.wrapping_add(b) < a
 }
 
 /// Computes the overflow flag after an addition.

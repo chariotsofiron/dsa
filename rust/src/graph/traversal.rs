@@ -3,24 +3,10 @@ use super::{Graph, NeighborIterator};
 use std::collections::VecDeque;
 
 impl Graph {
-    /// aka breadth first search (BFS) <https://en.wikipedia.org/wiki/Breadth-first_search>
-    #[must_use]
-    pub fn level_order(&self, start: usize) -> LevelOrderIterator {
-        let mut visited = vec![false; self.len()];
-        visited[start] = true;
-        let queue = VecDeque::new();
-        let neighbors = self.neighbors(start);
-        LevelOrderIterator {
-            graph: self,
-            visited,
-            queue,
-            neighbors,
-        }
-    }
-
     /// Returns a vector of nodes in preorder traversal order.
     /// This is the same as DFS <https://en.wikipedia.org/wiki/Depth-first_search>
     /// Visit current node before children.
+    /// Note: does not include the start node.
     #[must_use]
     pub fn pre_order(&self, start: usize) -> PreOrderIterator {
         let neighbors = (0..self.len())
@@ -35,9 +21,26 @@ impl Graph {
         }
     }
 
+    /// aka breadth first search (BFS) <https://en.wikipedia.org/wiki/Breadth-first_search>
+    /// Note: does not include the start node.
+    #[must_use]
+    pub fn level_order(&self, start: usize) -> LevelOrderIterator {
+        let mut visited = vec![false; self.len()];
+        visited[start] = true;
+        let queue = VecDeque::new();
+        let neighbors = self.neighbors(start);
+        LevelOrderIterator {
+            graph: self,
+            visited,
+            queue,
+            neighbors,
+        }
+    }
+
     /// Returns a vector of nodes in postorder traversal order.
     /// The vertices are listed in the order in which they are last visited
     /// by a DFS traversal.
+    /// Similar to a topological sort, except it supports cycles, and provides the nodes in reverse-order.
     #[must_use]
     pub fn post_order(&self, start: usize) -> PostOrderIterator {
         let neighbors = (0..self.len())
@@ -124,7 +127,7 @@ pub struct PostOrderIterator<'a> {
 
 impl Iterator for PostOrderIterator<'_> {
     type Item = usize;
-    fn next(&mut self) -> Option<usize> {
+    fn next(&mut self) -> Option<Self::Item> {
         loop {
             let &u = self.stack.last()?;
             self.tail = true;
@@ -164,17 +167,16 @@ mod tests {
             graph.pre_order(1).collect::<Vec<_>>(),
             [(2, 1), (4, 2), (3, 0), (5, 4), (7, 6), (8, 5), (6, 3)]
         );
-
         assert_eq!(
             graph.level_order(1).collect::<Vec<_>>(),
             [(2, 1), (3, 0), (4, 2), (5, 4), (6, 3), (7, 6), (8, 5)]
         );
-
         assert_eq!(
             graph.post_order(1).collect::<Vec<_>>(),
             [4, 2, 7, 8, 5, 6, 3, 1]
         );
 
+        // <https://stackoverflow.com/q/36488968>
         let graph = Graph::from([
             (1, 4),
             (1, 2),
@@ -185,6 +187,10 @@ mod tests {
             (5, 6),
             (5, 4),
         ]);
+        assert_eq!(
+            graph.pre_order(1).collect::<Vec<_>>(),
+            [(2, 1), (5, 2), (4, 7), (6, 6)]
+        );
         assert_eq!(graph.post_order(1).collect::<Vec<_>>(), [4, 6, 5, 2, 1]);
 
         let graph = Graph::from([
